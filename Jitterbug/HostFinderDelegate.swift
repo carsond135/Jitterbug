@@ -14,3 +14,10 @@
 // limitations under the License.
 //
 
+protocol HostFinderDelegate : AnyObject {
+    func hostFinderWillStart()
+    func hostFinderDidStop()
+    func hostFinderError(_ error: String)
+    func hostFinderNewHost(_ host: String, name: String?, address: Data)
+    func hostFinderRemoveHost(_ host: String)
+}

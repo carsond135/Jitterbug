@@ -14,3 +14,38 @@
 // limitations under the License.
 //
 
+import SwiftUI
+
+struct ManualAddHostView: View {
+    @EnvironmentObject private var main: Main
+    @State private var address: String = ""
+    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
+
+    var body: some View {
+        Form {
+            List {
+                #if canImport(UIKit)
+                TextField("Host", text: $address)
+                    .keyboardType(.asciiCapable)
+                #else
+                TextField("Host", text: $address)
+                #endif
+                Button {
+                    presentationMode.wrappedValue.dismiss()
+                    addHost(hostString: address)
+                } label: {
+                    Text("Add")
+                }.disabled(address.isEmpty)
+            }
+        }.frame(minWidth: 250, minHeight: 150)
+    }
+
+    private func addHost(hostString: String) {
+        main.backgroundTask(message: NSLocalizedString("Resolving...", comment: "ManualAddHostView")) {
+            let host = CFHostCreateWithName(kCFAllocatorDefault, hostString as CFString).takeRetainedValue()
+            CFHostStartInfoResolution(host, .addresses, nil)
+            var success: DarwinBoolean = false
+
+        }
+    }
+}
